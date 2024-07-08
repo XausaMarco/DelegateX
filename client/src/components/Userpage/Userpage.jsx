@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 function Userpage({ authenticated, user }) {
 
-    const { state: { contract, accounts } } = useEth();
     const [options, setOptions] = useState(<></>);
     const [services, setServices] = useState(<></>);
     const [services1, setServices1] = useState(<></>);

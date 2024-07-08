@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import './Institutionpage.css'
 
 function Institutionpage({authenticated,institution}){
-    const { state: {  accounts } } = useEth();
 
     const [delegations, setDelegations]=useState(<></>);
 

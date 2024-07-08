@@ -17,8 +17,7 @@ function RegisterInstitution({setDisplay}){
             name:name,
             email:email,
             vat:vat,
-            password:password,
-            //address:accounts[0]
+            password:password
         };
 
         fetch("http://localhost:3000/v1/registerinstitution",{
@@ -29,50 +28,12 @@ function RegisterInstitution({setDisplay}){
         .then(response => {
             return response.json();
         })
-        // .then(async (response) => {
-        //     if(response.stored===false)
-        //         alert("Institution has not been created. Error:"+response.error);
-        //     else{               
-        //         const owner = web3.eth.accounts.privateKeyToAccount(process.env.REACT_APP_CONTRACT_OWNER_PRVATEKEY);
-
-        //         web3.eth.accounts.wallet.add(owner);
-                
-        //         await contract.methods.addInstitution(accounts[0]).send({ 
-        //             from: owner.address,
-        //             gas: 100000
-        //         })
-        //         .then(async()=>{
-        //             let authorized=await contract.methods.isAuthorizedInstitution(accounts[0]).call({ from: owner.address});
-        //             console.log("Institution authorized="+authorized);
-        //             if(authorized)
-        //                 alert("Institution created!");
-        //             else{
-        //                 alert("problem with the creation of the institution");
-        //                 fetch("http://localhost:3000/v1/rollbackinstitution",{
-        //                     method:'POST',
-        //                     headers: { "Content-Type": "application/json" },
-        //                     body:JSON.stringify({vat:vat})
-        //                 });
-        //             }
-        //         })
-        //         .catch ((error)=> {
-        //             alert('an error occurred');
-        //             console.log('error: '+error);
-        //             fetch("http://localhost:3000/v1/rollbackinstitution",{
-        //                 method:'POST',
-        //                 headers: { "Content-Type": "application/json" },
-        //                 body:JSON.stringify({vat:vat})
-        //             });
-        //         });
-
-                
-        //     }
-        // })
-
-
-
-
-        
+        .then(response =>{
+            if(response.stored)
+                alert("institution stored");
+            else
+                alert("institution not stored: " + response.error);
+        })
     }
 
     function handleClick(e){

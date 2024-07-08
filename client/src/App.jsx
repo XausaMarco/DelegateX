@@ -1,4 +1,3 @@
-import { EthProvider } from "./contexts/EthContext";
 import { BrowserRouter, Route, Routes, Navigate  } from 'react-router-dom';
 import { useState } from "react";
 import Userpage from "./components/Userpage/Userpage.jsx"
@@ -26,22 +25,17 @@ function App() {
   })
 
   return (
-    <EthProvider>
       <div>
         <BrowserRouter>
           <Routes>
-
             <Route path="/" element={<Dashboard setUser={setUser} setInstitution={setInstitution} setLoginUser={setLoginUser} setLoginInstitution={setLoginInstitution}/>}/>
             <Route path="/user" element={<Userpage authenticated={loginUser} user={user}/>}/>
             <Route path="/institution" element={<Institutionpage authenticated={loginInstitution} institution={institution}/>}/>
             <Route path="/error" element={<Error/>}/>
             <Route path="*" element={<Navigate to="/" />} exact />
-
-
           </Routes>
         </BrowserRouter>
       </div>
-    </EthProvider>
   );
 }
 
