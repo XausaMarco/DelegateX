@@ -4,12 +4,11 @@ const app = express();
 const cors = require("cors");
 
 app.use(
-  cors()
-  // {
-  // origin: ["deployed-url"],
-  // methods: ["GET", "POST"],
-  // credentials: true,
-  // }
+  cors({
+    origin: ["https://delegate-x-frontend.vercel.app/"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
