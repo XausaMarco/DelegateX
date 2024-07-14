@@ -33,29 +33,6 @@ function Institutionpage({authenticated,institution}){
         .then(response => {
             return response.json();
         })
-        // .then(async (response) => {
-        //     console.log(response);
-        //     if(response.stored){
-                
-        //         if(accounts[0]===institution.address){
-        //             await contract.methods.addService(service).send({ from: accounts[0]  })
-        //             .then(()=>alert("service added"))
-        //             .catch((err)=>{
-        //                 alert("contract not signed");
-        //                 fetch("http://localhost:3000/v1/rollbackservice",{
-        //                     method:'POST',
-        //                     headers: { "Content-Type": "application/json" },
-        //                     body:JSON.stringify({vat:vat,service:service})
-        //                 });
-        //             });
-        //         }
-        //         else    
-        //             alert("wrong account on metamask");
-               
-        //     }
-
-            
-        // })
 
     }
 
@@ -66,66 +43,8 @@ function Institutionpage({authenticated,institution}){
         let userAddress =e.target.address.value;
         let vat=institution.vat
         
+        // solana script to check thge delegeation in the token
         
-        
-        // if(accounts[0]===institution.address){
-        //     contract.events.debug({}, (error, event) => {
-        //         if (error) {
-        //           console.error("Error:", error);
-        //           return;
-        //         }
-              
-        //         // Handle the event data
-        //     console.log("Event received:", event.returnValues);
-        //     })
-        //     .on("data", (event) => {         
-        //     console.log(event.code);
-        //     }); 
-
-           
-        //     contract.methods.institutionDelegations(userAddress).call({ from: accounts[0] })
-        //     .then(async (res)=>{
-        //         const delegations = res.map((delegation) => ({
-        //             delegated: delegation.delegated,
-        //             institution: delegation.institution,
-        //             services: delegation.services,
-        //         }));
-        //         let ser=[];
-        //         for(let i=0; i<delegations.length; i++){
-        //             for(let j=0; j<delegations[i].services.length; j++){
-        //                 console.log("service encoded = "+delegations[i].services[j]);
-                        
-        //                 let toBeSent={
-        //                     vat:vat,
-        //                     encoded:delegations[i].services[j]
-        //                 }
-
-        //                 let service= await fetch("http://localhost:3000/v1/decode",{
-        //                     method:'POST',
-        //                     headers: { "Content-Type": "application/json" },
-        //                     body:JSON.stringify(toBeSent)
-        //                 }) 
-        //                 .then(response => {
-                            
-        //                     let tmp= response.json();
-        //                     return tmp;
-                            
-        //                 })
-        //                 console.log(service);
-        //                 ser.push(<p key={`${i}-${j}`}>delegated: {delegations[i].delegated}, service: {service.decoded}</p>);
-
-                        
-        //             }
-        //         }
-        //         setDelegations(ser);
-
-
-        //     })
-
-        // }else{
-        //     alert("check metamask account: user and account not match!");
-        // }
-
     }
 
     return <>

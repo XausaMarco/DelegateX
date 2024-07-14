@@ -62,105 +62,19 @@ function Userpage({ authenticated, user }) {
 
     async function handleSubmit1(e) {
         e.preventDefault();
+
+        //take the correct data
         let address = e.target.delegated_address.value;
         let vat = JSON.parse(e.target.vat.value).vat;
         let service = e.target.service.value;
         let institutionAddress = JSON.parse(e.target.vat.value).address;
-
-        let toBeSent = {
-            vat: vat,
-            taxcode: user.taxcode,
-            service: service
-        }
-        console.log(toBeSent)
-
-        let res = await fetch("http://localhost:3000/v1/encode", {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(toBeSent)
-        }).then(response => {
-            return response.json();
-
-        })
-
-        if (res.error) {
-            alert("error occurred, try again");
-        }
-        else{
-            // let isValid=await contract.methods.checkService(institutionAddress,service).call({ from: accounts[0]  })
-            // console.log("isvalid: "+isValid);
-            // if(isValid){
-            //     let encodedservice=res.encoded;
-            //     console.log("encodedservice check delegation: "+encodedservice);
-            //     if(accounts[0]===user.address){
-            //         contract.events.debug(options, (error, event) => {
-            //             if (error) {
-            //               console.error("Error:", error);
-            //               return;
-            //             }
-                      
-            //             // Handle the event data
-            //             console.log("Event received:", event.returnValues);
-            //           })
-            //         .on("data", (event) => {
-            //             if(event.code==="delegation alredy exists")
-            //                 alert("delegation alredy exists");
-            //             console.log(event);
-            //         })
-            //         contract.methods.delegate(address,institutionAddress,encodedservice).send({ from: accounts[0] })
-            //         .then(()=>{
-            //             alert("delegation approved");
-            //         })
-            //     }
-            // }
-            // else
-            //     alert("service not found in the contract");
-        }
+        
+        //invoke the solana script to create the token
 
 
     }
 
-    async function handleSubmit2(e) {
-        e.preventDefault();
-        let address = e.target.delegated_address.value;
-        let service = e.target.service.value;
-        let vat = JSON.parse(e.target.vat.value).vat;
-        let institutionAddress = JSON.parse(e.target.vat.value).address;
-
-        let toBeSent = {
-            vat: vat,
-            taxcode: user.taxcode,
-            service: service
-        }
-        console.log(toBeSent)
-
-        let res = await fetch("http://localhost:3000/v1/encode", {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(toBeSent)
-        }).then(response => {
-            return response.json();
-        })
-
-
-        if (res.error) {
-            alert("error occurred, try again");
-        }
-        else {
-            // let encodedservice = res.encoded;
-            // console.log("encodedservice check delegation: " + encodedservice);
-            // contract.methods.checkDelegationUser(address, institutionAddress, encodedservice).call({ from: accounts[0] })
-            //     .then((res) => {
-            //         if (res)
-            //             alert("Delegation permitted");
-            //         else
-            //             alert("Delegation not permitted");
-            //     })
-            //     .catch((err) => { console.log("error"); console.log(err) });
-        }
-
-    }
-
+   
 
     function handleChange(e) {
         e.preventDefault();
@@ -188,95 +102,9 @@ function Userpage({ authenticated, user }) {
             })
     }
 
-    function handleChange1(e) {
-        e.preventDefault();
+   
 
-        let vat = JSON.parse(e.target.value).vat;
-
-        let toBeSent = {
-            vat: vat
-        }
-
-        fetch("http://localhost:3000/v1/services", {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(toBeSent)
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then((res) => {
-                let sup = [];
-                for (let i = 0; i < res.services.length; i++) {
-                    sup.push(<option value={res.services[i]} >{res.services[i]} </option>);
-                }
-                setServices1(sup);
-            })
-    }
-
-    function handleFormViewDelegations(e) {
-        e.preventDefault();
-
-
-        let addressInst = JSON.parse(e.target.institutionView.value).address;
-        let vat = JSON.parse(e.target.institutionView.value).vat;
-
-
-
-        
-        
-        //if(accounts[0]===user.address){
-        //     contract.events.debug(options, (error, event) => {
-        //         if (error) {
-        //             console.error("Error:", error);
-        //             return;
-        //         }
-
-        //         // Handle the event data
-        //         console.log("Event received:", event.returnValues);
-        //     })
-        //         .on("data", (event) => {
-        //             console.log(event.code);
-        //         });
-
-
-        //     contract.methods.userDelegations(addressInst).call({ from: accounts[0] })
-        //         .then(async (res) => {
-        //             const delegations = res.map((delegation) => ({
-        //                 delegated: delegation.delegated,
-        //                 services: delegation.services,
-        //             }));
-        //             let ser = [];
-        //             for (let i = 0; i < delegations.length; i++) {
-        //                 for (let j = 0; j < delegations[i].services.length; j++) {
-        //                     console.log("service encoded = " + delegations[i].services[j]);
-
-        //                     let toBeSent = {
-        //                         vat: vat,
-        //                         encoded: delegations[i].services[j]
-        //                     }
-
-        //                     let service = await fetch("http://localhost:3000/v1/decode", {
-        //                         method: 'POST',
-        //                         headers: { "Content-Type": "application/json" },
-        //                         body: JSON.stringify(toBeSent)
-        //                     })
-        //                         .then(response => {
-        //                             return response.json();
-        //                         })
-        //                         ser.push(<p key={`${i}-${j}`}><b>Delegated:</b> {delegations[i].delegated}<br/><b>Service:</b> {service.decoded}</p>);
-
-        //                 }
-        //             }
-        //             setDelegations(ser);
-
-
-        //         })
-
-        // } else {
-        //     alert("check metamask account: user and account not match!");
-        // }
-    }
+  
 
 
 
@@ -357,53 +185,7 @@ function Userpage({ authenticated, user }) {
                     <button type="submit">Delegate</button>
                 </form>
             </section>
-
-            <section>
-                <h1>Check Delegation</h1>
-                <form onSubmit={handleSubmit2}>
-                    <br />
-                    <label>delegated address</label>
-                    <br />
-                    <input type="text" name="delegated_address" />
-                    <br />
-                    <label>vat of company to delegate</label>
-                    <br />
-                    <select name="vat" onChange={handleChange1}>
-                        {options}
-                    </select>
-                    <br />
-                    <label>service</label>
-                    <br />
-                    <select name="service">
-                        {services1}
-                    </select>
-                    <br />
-                    <br />
-                    <button type="submit">Check</button>
-                </form>
-            </section>
-
-            <section>
-                <h1>View Delegations</h1>
-                <form onSubmit={handleFormViewDelegations}>
-                    <br></br>
-                    <label>select institution</label>
-                    <br></br>
-                    <select name="institutionView">
-                        {options}
-                    </select>
-                    <br></br>
-                    <button type="submit" onClick={() => setShowDelegations(true)}>View</button>
-                </form>
-                {showDelegations && (
-                    <div className="modal">
-                        <div className="modal-content">
-                            {delegations}
-                            <button className="modal-close" onClick={() => setShowDelegations(false)}>Ok</button>
-                        </div>
-                    </div>
-                )}
-            </section>
+        
 
             <section>
                 <h1>Delete Delegation</h1>
