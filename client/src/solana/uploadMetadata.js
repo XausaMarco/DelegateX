@@ -13,38 +13,21 @@ const myKeypairSigner = createSignerFromKeypair(umi, keypair);
 umi.use(signerIdentity(myKeypairSigner)).use(irysUploader());
 
 export default async (attributes) => {
-    const metadata = {
-      name: "DelegateX Delegation",
-      symbol: "DGX",
-      description: "DelegateX delegation token",
-      image: "",
-      attributes: [
-          {
-              trait_type: "Author",
-              value: "DelegateX"
-          }
-          ...attributes
-      ],
-      proprieties: {
-          files: [
-              {
-                  type: "image/jpeg",
-                  uri: "https://arweave.net/9AXtb2s4JBRoQ_y95OUwUTp5rKCMs4w1IYbPhoJOypg"
-              }
-          ]
-      }
-  }
+  const metadata = {
+    name: "DelegateX Delegation",
+    symbol: "DGX",
+    description: "DelegateX delegation token",
+    image: "",
+    attributes: [
+      {
+        trait_type: "Author",
+        value: "DelegateX",
+      },
+      ...attributes,
+    ],
+  };
 
   const nftUri = await umi.uploader.uploadJson(metadata);
   console.log("Your Uri:", nftUri);
   return nftUri;
 };
-
-
-//attributes mus have the form
-/**
- * {
- *      trait_type:"",
- *      value:""
- * }
- */
