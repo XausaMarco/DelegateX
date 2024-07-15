@@ -5,9 +5,10 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["https://delegate-x-frontend.vercel.app/"],
+    origin: ["https://delegate-x-frontend.vercel.app"],
     methods: ["GET", "POST"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
