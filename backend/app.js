@@ -5,7 +5,16 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["https://delegate-x-frontend.vercel.app"],
+    origin: (origin, callback) => {
+      if (
+        origin &&
+        origin.startsWith("https://delegate-x-frontend.vercel.app/")
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
