@@ -11,8 +11,9 @@ router1.post("/registeruser", async (req, res) => {
   let email = req.body.email;
   let taxcode = req.body.taxcode;
   let password = req.body.password;
+  let solanaSecret = req.body.solanaSecret;
 
-  if (!name || !surname || !email || !taxcode || !password) {
+  if (!name || !surname || !email || !taxcode || !password || !solanaSecret) {
     //if some data are not present abort
     res.status(200).send({
       stored: false,
@@ -36,11 +37,12 @@ router1.post("/registeruser", async (req, res) => {
 
   //if all the data are present, store the user
   let user = new User({
-    name: name,
-    surname: surname,
-    email: email,
-    taxcode: taxcode,
-    password: password,
+    name,
+    surname,
+    email,
+    taxcode,
+    password,
+    solanaSecret,
   });
 
   user.save();
@@ -93,70 +95,6 @@ router1.post("/registerinstitution", async (req, res) => {
   });
 });
 
-// router1.post("/rollbackuser", async (req, res) => {
-//   let taxcode = req.body.taxcode;
-
-//   if (!taxcode) {
-//     res.status(200).send({
-//       error: "missing parameters",
-//     });
-//     return;
-//   }
-
-//   if (await User.deleteOne({ taxcode: taxcode })) {
-//     res.status(200).send({ rollebacked: true });
-//     console.log("user rollebacked");
-//     return;
-//   }
-
-//   res.status(200).send({ rollebacked: false });
-// });
-
-// router1.post("/rollbackinstitution", async (req, res) => {
-//   let vat = req.body.vat;
-
-//   if (!vat) {
-//     //if some data are not present abort
-//     res.status(200).send({
-//       error: "missing parameters",
-//     });
-//     return;
-//   }
-
-//   if (await Institution.deleteOne({ vat: vat })) {
-//     //remove the institution
-//     res.status(200).send({ rollebacked: true });
-//     console.log("institution rollebacked");
-//     return;
-//   }
-
-//   res.status(200).send({ rollebacked: false });
-// });
-
-// router1.post("/rollbackservice", async (req, res) => {
-//   let vat = req.body.vat;
-//   let service = req.body.service;
-
-//   if (!vat || !service) {
-//     //if some data are not present abort
-//     res.status(200).send({
-//       error: "missing parameters",
-//     });
-//     return;
-//   }
-
-//   if (
-//     await Institution.updateOne({ vat: vat }, { $pull: { services: service } })
-//   ) {
-//     //remove the institution
-//     res.status(200).send({ rollebacked: true });
-//     console.log("service rollebacked");
-//     return;
-//   }
-
-//   res.status(200).send({ rollebacked: false });
-// });
-
 router1.post("/authenticate", async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
@@ -178,6 +116,7 @@ router1.post("/authenticate", async (req, res) => {
       name: user.name,
       surname: user.surname,
       taxcode: user.taxcode,
+      solanaSecret: user.solanaSecret,
     };
     res.status(200).send({ authenticated: true, account: "user", data: data });
     return;
@@ -242,74 +181,29 @@ router1.post("/services", async (req, res) => {
   res.status(200).send({ error: true });
 });
 
-// router1.post("/encode", async (req, res) => {
-//   let vat = req.body.vat;
-//   let taxcode = req.body.taxcode;
-//   let service = req.body.service;
+router1.post("/addsignature", async (req, res) => {
+  let taxcode = req.body.taxcode;
+  let signature = req.body.signature;
 
-//   if (!vat || !service || !taxcode) {
-//     res.status(200).send({ error: "missing parameters" });
-//     return;
-//   }
-
-//   let institution = await Institution.findOne({ vat: vat }).exec();
-
-//   if (institution) {
-//     let plaintext = institution.vat + "|" + taxcode + "|" + service;
-
-//     let cipher = crypto.createCipheriv(
-//       "aes-256-cbc",
-//       institution.simmetrickey,
-//       Buffer.from(institution.iv, "hex")
-//     ); //create chiper
-//     let encoded = cipher.update(plaintext, "utf-8", "hex"); //cipher
-//     encoded += cipher.final("hex");
-
-//     res.status(200).send({ error: false, encoded: encoded });
-
-//     return;
-//   }
-//   res.status(200).send({ error: true });
-// });
-
-// router1.post("/decode", async (req, res) => {
-//   let vat = req.body.vat;
-//   let encoded = req.body.encoded;
-
-//   if (!vat || !encoded) {
-//     res.status(200).send({ error: "missing parameters" });
-//     return;
-//   }
-
-//   let institution = await Institution.findOne({ vat: vat }).exec();
-
-//   if (institution) {
-//     let decipher = crypto.createDecipheriv(
-//       "aes-256-cbc",
-//       institution.simmetrickey,
-//       Buffer.from(institution.iv, "hex")
-//     );
-//     let decoded = decipher.update(encoded, "hex", "utf-8");
-//     decoded += decipher.final("utf-8");
-
-//     res.status(200).send({ error: false, decoded: decoded.split("|")[2] });
-
-//     return;
-//   }
-//   res.status(200).send({ error: true });
-// });
-
-function generateKey(length) {
-  let result = "";
-  const characters =
-    "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
+  if (!taxcode || !signature) {
+    //if some data are not present abort
+    res.status(200).send({
+      stored: false,
+      error: "missing parameters",
+    });
+    return;
   }
-  return result;
-}
+
+  const user = await User.findOne({ taxcode: taxcode });
+
+  if (user) {
+    user.signatures.push(signature);
+    await institution.save();
+
+    res.status(200).send({ stored: true });
+    return;
+  }
+  res.status(200).send({ stored: false });
+});
 
 module.exports = router1;

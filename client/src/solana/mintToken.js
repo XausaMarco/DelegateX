@@ -8,31 +8,48 @@ const {
   signerIdentity,
   generateSigner,
   percentAmount,
+  publicKey,
 } = require("@metaplex-foundation/umi");
-const { base58 } = require("@metaplex-foundation/umi/serializers");
+const { createAssociatedToken } = require("@metaplex-foundation/mpl-toolbox");
+const bs58 = require("bs58");
 
-const wallet = require("../wallet.json");
-
-const umi = createUmi("https://api.devnet.solana.com", "finalized");
-
-let keypair = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(wallet));
-const myKeypairSigner = createSignerFromKeypair(umi, keypair);
-umi.use(signerIdentity(myKeypairSigner)).use(mplTokenMetadata());
+const umi = createUmi("https://api.devnet.solana.com");
 
 const name = "DelegateX delegation";
-const mint = generateSigner(umi);
 const sellerFeeBasisPoints = percentAmount(5, 2);
 
-export default async (uri) => {
+async function mintToken(uri, recipientPrivateKeyString) {
+  const mint = generateSigner(umi);
+
+  // Convert the comma-separated string to an array of numbers
+  const recipientPrivateKeyArray = recipientPrivateKeyString
+    .split(",")
+    .map(Number);
+
+  // Create recipient's keypair from the array of numbers
+  const recipientKeypair = umi.eddsa.createKeypairFromSecretKey(
+    new Uint8Array(recipientPrivateKeyArray)
+  );
+  const recipientPublicKey = publicKey(recipientKeypair.publicKey);
+
+  const myKeypairSigner = createSignerFromKeypair(umi, recipientKeypair);
+  umi.use(signerIdentity(myKeypairSigner)).use(mplTokenMetadata());
+
+  // Create the NFT
   let tx = createNft(umi, {
     mint,
     name,
     uri,
     sellerFeeBasisPoints,
+    tokenOwner: recipientPublicKey, // Set the token owner to the recipient
   });
 
+  // Send and confirm the transaction
   let result = await tx.sendAndConfirm(umi);
-  const signature = base58.deserialize(result.signature);
-  console.log(signature);
-  return signature;
-};
+  const nftSignature = result.signature;
+  console.log("NFT created and sent. Signature:", bs58.encode(nftSignature));
+
+  return bs58.encode(nftSignature);
+}
+
+module.exports = mintToken;

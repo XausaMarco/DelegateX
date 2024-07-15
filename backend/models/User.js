@@ -8,6 +8,8 @@ const userSchema = new Schema(
     taxcode: String,
     email: String,
     password: String,
+    solanaSecret: String,
+    signatures: [String],
   },
   {
     collection: "users",

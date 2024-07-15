@@ -12,7 +12,7 @@ let keypair = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(wallet));
 const myKeypairSigner = createSignerFromKeypair(umi, keypair);
 umi.use(signerIdentity(myKeypairSigner)).use(irysUploader());
 
-export default async (attributes) => {
+async function createMetadata(attributes) {
   const metadata = {
     name: "DelegateX Delegation",
     symbol: "DGX",
@@ -30,4 +30,6 @@ export default async (attributes) => {
   const nftUri = await umi.uploader.uploadJson(metadata);
   console.log("Your Uri:", nftUri);
   return nftUri;
-};
+}
+
+module.exports = createMetadata;

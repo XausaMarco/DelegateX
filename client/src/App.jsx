@@ -15,13 +15,13 @@ function App() {
     name:null,
     surname:null,
     taxcode:null,
-    address:null
+    solanaSecret:null
   });
   
   const [institution,setInstitution]=useState({
     name:null,
     vat:null,
-    address:null
+    solanaSecret:null
   })
 
   return (

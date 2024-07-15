@@ -11,16 +11,14 @@ export default function Login({
 
   function handleSubmit(e) {
     e.preventDefault();
-
-    let email = e.target.email.value;
-    let password = e.target.password.value;
-    //let address=accounts[0];
-
-    let toBeSent = {
-      email: email,
-      password: password,
-      //address:address
-    };
+    
+    let email =e.target.email.value;
+    let password =e.target.password.value;
+  
+    let toBeSent={
+      email:email,
+      password:password
+    }
 
     console.log(toBeSent);
 
@@ -29,50 +27,46 @@ export default function Login({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(toBeSent),
     })
-      .then((response) => {
-        return response.json();
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.authenticated) {
-          if (res.account === "user") {
-            setLoginUser(true);
-            setUser({
-              name: res.data.name,
-              surname: res.data.surname,
-              taxcode: res.data.taxcode,
-              address: res.data.address,
-            });
-            setLoginInstitution(false);
-            setInstitution({
-              name: null,
-              vat: null,
-              address: null,
-            });
-            navigate("/user"); // Redirect to /user route
-          }
-
-          if (res.account === "institution") {
-            setLoginInstitution(true);
-            setInstitution({
-              name: res.data.name,
-              vat: res.data.vat,
-              address: res.data.address,
-            });
-            setLoginUser(false);
-            setUser({
-              name: null,
-              surname: null,
-              taxcode: null,
-              address: null,
-            });
-            navigate("/institution"); // Redirect to /institution route
-          }
-        } else
-          alert(
-            "Wrong credentials, take care of selecting the right address on metamask"
-          );
-      });
+    .then((res=>{
+      console.log(res);
+      if(res.authenticated){
+        if(res.account==="user"){
+          setLoginUser(true);
+          setUser({
+            name:res.data.name,
+            surname:res.data.surname,
+            taxcode:res.data.taxcode,
+            solanaSecret:res.data.solanaSecret
+          });
+          setLoginInstitution(false);
+          setInstitution({
+            name:null,
+            vat:null,
+            solanaSecret:null
+          })
+          navigate("/user"); // Redirect to /user route
+        }
+          
+        if(res.account==="institution"){
+          setLoginInstitution(true);
+          setInstitution({
+            name:res.data.name,
+            vat:res.data.vat,
+            solanaSecret:res.data.solanaSecret
+          })
+          setLoginUser(false);
+          setUser({
+            name:null,
+            surname:null,
+            taxcode:null,
+            solanaSecret:null
+          })
+          navigate("/institution"); // Redirect to /institution route
+        }
+      }
+      else 
+        alert("Wrong credentials, take care of selecting the right address on metamask");
+    }))
   }
 
   return (
